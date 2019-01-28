@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:ignore="MissingDefaultResource">
+    android:layout_height="match_parent">
     <TextView
         android:id="@+id/tvCorner"
         android:text="#"
@@ -65,8 +64,8 @@
         android:layout_below="@id/hsvHeaderColumn"
         android:layout_toEndOf="@id/svHeaderRow"
         android:layout_width="match_parent"
-        android:id="@+id/rvHeader"
         android:layout_height="match_parent"
+        android:id="@+id/rvHeader"
         android:layout_toRightOf="@id/svHeaderRow">
 
     </android.support.v7.widget.RecyclerView>

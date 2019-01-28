@@ -175,7 +175,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
 
         val rect = Rect()
         textViewCell.paint.getTextBounds(textViewCell.text.toString(), 0, textViewCell.text.length, rect)
-        return rect.width()
+        return rect.width() + 60
     }
 
     private fun getMaxCaracter(rows: ArrayList<Row>): Int {

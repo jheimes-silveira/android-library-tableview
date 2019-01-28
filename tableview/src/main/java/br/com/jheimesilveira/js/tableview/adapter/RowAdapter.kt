@@ -44,7 +44,7 @@ class RowAdapter(private val context: Context, private var rows: ArrayList<Row>)
             textViewCell.layoutParams = lp
             textViewCell.gravity = Gravity.CENTER_VERTICAL
             textViewCell.maxLines = 1
-            textViewCell.setPadding(20, 0, 20, 0)
+            textViewCell.setPadding(26, 0, 0, 0)
             textViewCell.setBackgroundResource(R.drawable.border_contorn_row)
             holder.llBody.addView(textViewCell)
         }

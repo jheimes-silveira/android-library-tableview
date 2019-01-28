@@ -317,7 +317,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager {
                 mVisibleRowCount = getTotalRowCount();
             }
         } catch (Exception e) {
-            mVisibleColumnCount = getHorizontalSpace() + 1;
+            e.printStackTrace();
         }
     }
 

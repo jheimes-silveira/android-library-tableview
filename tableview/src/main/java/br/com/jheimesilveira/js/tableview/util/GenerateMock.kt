@@ -13,7 +13,7 @@ object GenerateMock {
         val array = ArrayList<Row>()
 
         for (i in 0..rows) {
-            val skRow = Row(getPrepareColumn(i, column))
+            val skRow = Row(getPrepareColumn())
             array.add(skRow)
         }
         return array
@@ -26,6 +26,72 @@ object GenerateMock {
             val skCell = Cell(data = "Item $ref ${if (i % 2 == 0) "" else "um novo texto maior para testar as dimencões"}")
             array.add(skCell)
         }
+        return array
+    }
+
+    private fun getPrepareColumn(): ArrayList<Cell> {
+        val array = ArrayList<Cell>()
+
+        var skCell = Cell(data = "Lorem ipsum dolor sit amet")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam elementum lacus mi, in ultricies eros imperdiet sit amet. Donec vel purus mauris.")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam elementum lacus mi, in ultricies eros imperdiet sit amet. Donec vel purus mauris.")
+        array.add(skCell)
+
+        skCell = Cell(data = "R$ 56.573,00")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam elementum lacus mi, in ultricies eros imperdiet sit amet. Donec vel purus mauris.")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing.")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit adipiscing elit adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur elit.")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet.")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam elementum lacus mi, in ultricies eros imperdiet sit amet. Donec vel purus mauris.")
+        array.add(skCell)
+
         return array
     }
 
