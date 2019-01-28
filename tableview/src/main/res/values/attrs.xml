@@ -1,0 +1,7 @@
+<resources>
+    <declare-styleable name="TableView">
+        <attr name="titleText" format="string" localization="suggested" />
+        <attr name="titleTextDialog" format="string" localization="suggested" />
+        <attr name="titleColor" format="color" />
+    </declare-styleable>
+</resources>

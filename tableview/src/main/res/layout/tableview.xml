@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="MissingDefaultResource">
+    <TextView
+        android:id="@+id/tvCorner"
+        android:text="#"
+        android:background="@drawable/border_contorn_corner"
+        android:gravity="center"
+        android:layout_width="40dp"
+        android:layout_height="40dp"/>
+
+    <ScrollView
+        android:scrollbars="none"
+        android:layout_below="@id/tvCorner"
+        android:id="@+id/svHeaderRow"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/llHeaderRow"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="row"
+                android:layout_width="40dp"
+                android:background="@drawable/border_contorn_row_header"
+                android:layout_height="750dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <HorizontalScrollView
+        android:layout_toEndOf="@id/svHeaderRow"
+        android:layout_width="match_parent"
+        android:id="@+id/hsvHeaderColumn"
+        android:scrollbars="none"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/svHeaderRow">
+
+        <LinearLayout
+            android:id="@+id/llHeaderColumn"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Header"
+                android:layout_width="400dp"
+                android:background="@drawable/border_contorn_column_header"
+                android:layout_height="40dp" />
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/hsvHeaderColumn"
+        android:layout_toEndOf="@id/svHeaderRow"
+        android:layout_width="match_parent"
+        android:id="@+id/rvHeader"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/svHeaderRow">
+
+    </android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>
