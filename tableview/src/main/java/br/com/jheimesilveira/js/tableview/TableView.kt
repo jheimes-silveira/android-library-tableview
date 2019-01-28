@@ -23,14 +23,14 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     lateinit var columnsHeader: ArrayList<ColumnHeader>
     lateinit var rowsHeader: ArrayList<RowHeader>
 
-    private lateinit var rvHeader: RecyclerView
-    private lateinit var hsvHeaderColumn: HorizontalScrollView
-    private lateinit var svHeaderRow: ScrollView
-    private lateinit var llHeaderRow: LinearLayout
-    private lateinit var llHeaderColumn: LinearLayout
+    lateinit var rvHeader: RecyclerView
+    lateinit var hsvHeaderColumn: HorizontalScrollView
+    lateinit var svHeaderRow: ScrollView
+    lateinit var llHeaderRow: LinearLayout
+    lateinit var llHeaderColumn: LinearLayout
 
-    private lateinit var SKRowAdapter: RowAdapter
-    private lateinit var tvCorner: TextView
+    lateinit var SKRowAdapter: RowAdapter
+    lateinit var tvCorner: TextView
 
     init {
 //        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TableView, 0, 0)
