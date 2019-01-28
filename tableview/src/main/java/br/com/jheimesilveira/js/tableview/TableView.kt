@@ -23,13 +23,13 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     lateinit var columnsHeader: ArrayList<ColumnHeader>
     lateinit var rowsHeader: ArrayList<RowHeader>
 
-    lateinit var rvHeader: RecyclerView
+    lateinit var rvRows: RecyclerView
     lateinit var hsvHeaderColumn: HorizontalScrollView
     lateinit var svHeaderRow: ScrollView
     lateinit var llHeaderRow: LinearLayout
     lateinit var llHeaderColumn: LinearLayout
 
-    lateinit var SKRowAdapter: RowAdapter
+    lateinit var rowAdapter: RowAdapter
     lateinit var tvCorner: TextView
 
     init {
@@ -70,7 +70,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     }
 
     private fun initViews() {
-        rvHeader = findViewById(R.id.rvHeader)
+        rvRows = findViewById(R.id.rvRows)
         hsvHeaderColumn = findViewById(R.id.hsvHeaderColumn)
         llHeaderColumn = findViewById(R.id.llHeaderColumn)
         llHeaderRow = findViewById(R.id.llHeaderRow)
@@ -239,15 +239,15 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
      * Handles RecyclerView for the action
      */
     private fun setUpRecyclerView() {
-        SKRowAdapter = RowAdapter(mContext, rows)
+        rowAdapter = RowAdapter(mContext, rows)
         val manager = FixedGridLayoutManager()
         manager.setTotalColumnCount(1)
-        rvHeader.layoutManager = manager
-        rvHeader.adapter = SKRowAdapter
-//        rvHeader.addItemDecoration(DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
+        rvRows.layoutManager = manager
+        rvRows.adapter = rowAdapter
+//        rvRows.addItemDecoration(DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
 
 
-        rvHeader.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        rvRows.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -261,7 +261,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             }
         })
 
-        rvHeader.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        rvRows.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 

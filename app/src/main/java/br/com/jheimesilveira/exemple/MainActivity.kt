@@ -15,4 +15,5 @@ class MainActivity : AppCompatActivity() {
         tableview.startAllItems(
                 rows = GenerateMock.prepareData(300, 20))
     }
+
 }
