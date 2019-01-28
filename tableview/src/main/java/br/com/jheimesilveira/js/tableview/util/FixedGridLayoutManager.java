@@ -35,8 +35,7 @@ import java.util.List;
  * Copy from https://github.com/devunwired/recyclerview-playground
  */
 
-public class FixedGridLayoutManager extends RecyclerView.LayoutManager
-{
+public class FixedGridLayoutManager extends RecyclerView.LayoutManager {
 
     private static final String TAG = FixedGridLayoutManager.class.getSimpleName();
 
@@ -74,8 +73,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      *
      * @param count Number of columns.
      */
-    public void setTotalColumnCount(int count)
-    {
+    public void setTotalColumnCount(int count) {
         mTotalColumnCount = count;
         requestLayout();
     }
@@ -88,8 +86,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * pre-layout, and again for the real layout.
      */
     @Override
-    public boolean supportsPredictiveItemAnimations()
-    {
+    public boolean supportsPredictiveItemAnimations() {
         return true;
     }
 
@@ -102,8 +99,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * happen AFTER pre-layout.
      */
     @Override
-    public void onItemsRemoved(RecyclerView recyclerView, int positionStart, int itemCount)
-    {
+    public void onItemsRemoved(RecyclerView recyclerView, int positionStart, int itemCount) {
         mFirstChangedPosition = positionStart;
         mChangedPositionCount = itemCount;
     }
@@ -122,28 +118,23 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * Then again to lay out children in their final locations.
      */
     @Override
-    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state)
-    {
+    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         //We have nothing to show for an empty data set but clear any existing views
-        if (getItemCount() == 0)
-        {
+        if (getItemCount() == 0) {
             detachAndScrapAttachedViews(recycler);
             return;
         }
-        if (getChildCount() == 0 && state.isPreLayout())
-        {
+        if (getChildCount() == 0 && state.isPreLayout()) {
             //Nothing to do during prelayout when empty
             return;
         }
 
         //Clear change tracking state when a real layout occurs
-        if (!state.isPreLayout())
-        {
+        if (!state.isPreLayout()) {
             mFirstChangedPosition = mChangedPositionCount = 0;
         }
 
-        if (getChildCount() == 0)
-        { //First or empty layout
+        if (getChildCount() == 0) { //First or empty layout
             //Scrap measure one child
             View scrap = recycler.getViewForPosition(0);
             addView(scrap);
@@ -169,26 +160,21 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
          * During pre-layout, we need to take note of any views that are
          * being removed in order to handle predictive animations
          */
-        if (state.isPreLayout())
-        {
+        if (state.isPreLayout()) {
             removedCache = new SparseIntArray(getChildCount());
-            for (int i = 0; i < getChildCount(); i++)
-            {
+            for (int i = 0; i < getChildCount(); i++) {
                 final View view = getChildAt(i);
                 LayoutParams lp = (LayoutParams) view.getLayoutParams();
 
-                if (lp.isItemRemoved())
-                {
+                if (lp.isItemRemoved()) {
                     //Track these view removals as visible
                     removedCache.put(lp.getViewLayoutPosition(), REMOVE_VISIBLE);
                 }
             }
 
             //Track view removals that happened out of bounds (i.e. off-screen)
-            if (removedCache.size() == 0 && mChangedPositionCount > 0)
-            {
-                for (int i = mFirstChangedPosition; i < (mFirstChangedPosition + mChangedPositionCount); i++)
-                {
+            if (removedCache.size() == 0 && mChangedPositionCount > 0) {
+                for (int i = mFirstChangedPosition; i < (mFirstChangedPosition + mChangedPositionCount); i++) {
                     removedCache.put(i, REMOVE_INVISIBLE);
                 }
             }
@@ -197,21 +183,18 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
 
         int childLeft;
         int childTop;
-        if (getChildCount() == 0)
-        { //First or empty layout
+        if (getChildCount() == 0) { //First or empty layout
             //Reset the visible and scroll positions
             mFirstVisiblePosition = 0;
             childLeft = getPaddingLeft();
             childTop = getPaddingTop();
         } else if (!state.isPreLayout()
-                && getVisibleChildCount() >= state.getItemCount())
-        {
+                && getVisibleChildCount() >= state.getItemCount()) {
             //Data set is too small to scroll fully, just reset position
             mFirstVisiblePosition = 0;
             childLeft = getPaddingLeft();
             childTop = getPaddingTop();
-        } else
-        { //Adapter data set changes
+        } else { //Adapter data set changes
             /*
              * Keep the existing initial position, and save off
              * the current scrolled offset.
@@ -224,14 +207,12 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
              * When data set is too small to scroll vertically, adjust vertical offset
              * and shift position to the first row, preserving current column
              */
-            if (!state.isPreLayout() && getVerticalSpace() > (getTotalRowCount() * mDecoratedChildHeight))
-            {
+            if (!state.isPreLayout() && getVerticalSpace() > (getTotalRowCount() * mDecoratedChildHeight)) {
                 mFirstVisiblePosition = mFirstVisiblePosition % getTotalColumnCount();
                 childTop = getPaddingTop();
 
                 //If the shift overscrolls the column max, back it off
-                if ((mFirstVisiblePosition + mVisibleColumnCount) > state.getItemCount())
-                {
+                if ((mFirstVisiblePosition + mVisibleColumnCount) > state.getItemCount()) {
                     mFirstVisiblePosition = Math.max(state.getItemCount() - mVisibleColumnCount, 0);
                     childLeft = getPaddingLeft();
                 }
@@ -247,22 +228,17 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
             int maxFirstCol = getTotalColumnCount() - (mVisibleColumnCount - 1);
             boolean isOutOfRowBounds = getFirstVisibleRow() > maxFirstRow;
             boolean isOutOfColBounds = getFirstVisibleColumn() > maxFirstCol;
-            if (isOutOfRowBounds || isOutOfColBounds)
-            {
+            if (isOutOfRowBounds || isOutOfColBounds) {
                 int firstRow;
-                if (isOutOfRowBounds)
-                {
+                if (isOutOfRowBounds) {
                     firstRow = maxFirstRow;
-                } else
-                {
+                } else {
                     firstRow = getFirstVisibleRow();
                 }
                 int firstCol;
-                if (isOutOfColBounds)
-                {
+                if (isOutOfColBounds) {
                     firstCol = maxFirstCol;
-                } else
-                {
+                } else {
                     firstCol = getFirstVisibleColumn();
                 }
                 mFirstVisiblePosition = firstRow * getTotalColumnCount() + firstCol;
@@ -272,12 +248,10 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
 
                 //Correct cases where shifting to the bottom-right overscrolls the top-left
                 // This happens on data sets too small to scroll in a direction.
-                if (getFirstVisibleRow() == 0)
-                {
+                if (getFirstVisibleRow() == 0) {
                     childTop = Math.min(childTop, getPaddingTop());
                 }
-                if (getFirstVisibleColumn() == 0)
-                {
+                if (getFirstVisibleColumn() == 0) {
                     childLeft = Math.min(childLeft, getPaddingLeft());
                 }
             }
@@ -290,31 +264,26 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
         fillGrid(DIRECTION_NONE, childLeft, childTop, recycler, state, removedCache);
 
         //Evaluate any disappearing views that may exist
-        if (!state.isPreLayout() && !recycler.getScrapList().isEmpty())
-        {
+        if (!state.isPreLayout() && !recycler.getScrapList().isEmpty()) {
             final List<RecyclerView.ViewHolder> scrapList = recycler.getScrapList();
             final HashSet<View> disappearingViews = new HashSet<View>(scrapList.size());
 
-            for (RecyclerView.ViewHolder holder : scrapList)
-            {
+            for (RecyclerView.ViewHolder holder : scrapList) {
                 final View child = holder.itemView;
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                if (!lp.isItemRemoved())
-                {
+                if (!lp.isItemRemoved()) {
                     disappearingViews.add(child);
                 }
             }
 
-            for (View child : disappearingViews)
-            {
+            for (View child : disappearingViews) {
                 layoutDisappearingView(child);
             }
         }
     }
 
     @Override
-    public void onAdapterChanged(RecyclerView.Adapter oldAdapter, RecyclerView.Adapter newAdapter)
-    {
+    public void onAdapterChanged(RecyclerView.Adapter oldAdapter, RecyclerView.Adapter newAdapter) {
         //Completely scrap the existing layout
         removeAllViews();
     }
@@ -324,47 +293,42 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * based on scroll offsets, we simplify the math by computing the
      * visible grid as what will initially fit on screen, plus one.
      */
-    private void updateWindowSizing()
-    {
+    private void updateWindowSizing() {
+        if (mDecoratedChildWidth == 0) mDecoratedChildWidth++;
         try {
             mVisibleColumnCount = (getHorizontalSpace() / mDecoratedChildWidth) + 1;
+
+            if (getHorizontalSpace() % mDecoratedChildWidth > 0) {
+                mVisibleColumnCount++;
+            }
+
+            //Allow minimum value for small data sets
+            if (mVisibleColumnCount > getTotalColumnCount()) {
+                mVisibleColumnCount = getTotalColumnCount();
+            }
+
+
+            mVisibleRowCount = (getVerticalSpace() / mDecoratedChildHeight) + 1;
+            if (getVerticalSpace() % mDecoratedChildHeight > 0) {
+                mVisibleRowCount++;
+            }
+
+            if (mVisibleRowCount > getTotalRowCount()) {
+                mVisibleRowCount = getTotalRowCount();
+            }
         } catch (Exception e) {
-            mVisibleColumnCount = 1;
-        }
-        if (getHorizontalSpace() % mDecoratedChildWidth > 0)
-        {
-            mVisibleColumnCount++;
-        }
-
-        //Allow minimum value for small data sets
-        if (mVisibleColumnCount > getTotalColumnCount())
-        {
-            mVisibleColumnCount = getTotalColumnCount();
-        }
-
-
-        mVisibleRowCount = (getVerticalSpace() / mDecoratedChildHeight) + 1;
-        if (getVerticalSpace() % mDecoratedChildHeight > 0)
-        {
-            mVisibleRowCount++;
-        }
-
-        if (mVisibleRowCount > getTotalRowCount())
-        {
-            mVisibleRowCount = getTotalRowCount();
+            mVisibleColumnCount = getHorizontalSpace() + 1;
         }
     }
 
-    private void fillGrid(int direction, RecyclerView.Recycler recycler, RecyclerView.State state)
-    {
+    private void fillGrid(int direction, RecyclerView.Recycler recycler, RecyclerView.State state) {
         fillGrid(direction, 0, 0, recycler, state, null);
     }
 
     private void fillGrid(int direction, int emptyLeft, int emptyTop,
                           RecyclerView.Recycler recycler,
                           RecyclerView.State state,
-                          SparseIntArray removedPositions)
-    {
+                          SparseIntArray removedPositions) {
         if (mFirstVisiblePosition < 0) mFirstVisiblePosition = 0;
         if (mFirstVisiblePosition >= getItemCount()) mFirstVisiblePosition = (getItemCount() - 1);
 
@@ -376,13 +340,11 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
         SparseArray<View> viewCache = new SparseArray<View>(getChildCount());
         int startLeftOffset = emptyLeft;
         int startTopOffset = emptyTop;
-        if (getChildCount() != 0)
-        {
+        if (getChildCount() != 0) {
             final View topView = getChildAt(0);
             startLeftOffset = getDecoratedLeft(topView);
             startTopOffset = getDecoratedTop(topView);
-            switch (direction)
-            {
+            switch (direction) {
                 case DIRECTION_START:
                     startLeftOffset -= mDecoratedChildWidth;
                     break;
@@ -398,8 +360,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
             }
 
             //Cache all views by their existing position, before updating counts
-            for (int i = 0; i < getChildCount(); i++)
-            {
+            for (int i = 0; i < getChildCount(); i++) {
                 int position = positionOfIndex(i);
                 final View child = getChildAt(i);
                 viewCache.put(position, child);
@@ -407,8 +368,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
 
             //Temporarily detach all views.
             // Views we still need will be added back at the proper index.
-            for (int i = 0; i < viewCache.size(); i++)
-            {
+            for (int i = 0; i < viewCache.size(); i++) {
                 detachView(viewCache.valueAt(i));
             }
         }
@@ -417,8 +377,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
          * Next, we advance the visible position based on the fill direction.
          * DIRECTION_NONE doesn't advance the position in any direction.
          */
-        switch (direction)
-        {
+        switch (direction) {
             case DIRECTION_START:
                 mFirstVisiblePosition--;
                 break;
@@ -442,8 +401,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
         int leftOffset = startLeftOffset;
         int topOffset = startTopOffset;
 
-        for (int i = 0; i < getVisibleChildCount(); i++)
-        {
+        for (int i = 0; i < getVisibleChildCount(); i++) {
             int nextPosition = positionOfIndex(i);
 
             /*
@@ -454,16 +412,13 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
              * initial locations.
              */
             int offsetPositionDelta = 0;
-            if (state.isPreLayout())
-            {
+            if (state.isPreLayout()) {
                 int offsetPosition = nextPosition;
 
-                for (int offset = 0; offset < removedPositions.size(); offset++)
-                {
+                for (int offset = 0; offset < removedPositions.size(); offset++) {
                     //Look for off-screen removals that are less-than this
                     if (removedPositions.valueAt(offset) == REMOVE_INVISIBLE
-                            && removedPositions.keyAt(offset) < nextPosition)
-                    {
+                            && removedPositions.keyAt(offset) < nextPosition) {
                         //Offset position to match
                         offsetPosition--;
                     }
@@ -472,16 +427,14 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
                 nextPosition = offsetPosition;
             }
 
-            if (nextPosition < 0 || nextPosition >= state.getItemCount())
-            {
+            if (nextPosition < 0 || nextPosition >= state.getItemCount()) {
                 //Item space beyond the data set, don't attempt to add a view
                 continue;
             }
 
             //Layout this position
             View view = viewCache.get(nextPosition);
-            if (view == null)
-            {
+            if (view == null) {
                 /*
                  * The Recycler will give us either a newly constructed view,
                  * or a recycled view it has on-hand. In either case, the
@@ -495,8 +448,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
                  * Update the new view's metadata, but only when this is a real
                  * layout pass.
                  */
-                if (!state.isPreLayout())
-                {
+                if (!state.isPreLayout()) {
                     LayoutParams lp = (LayoutParams) view.getLayoutParams();
                     lp.row = getGlobalRowOfPosition(nextPosition);
                     lp.column = getGlobalColumnOfPosition(nextPosition);
@@ -512,25 +464,21 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
                         leftOffset + mDecoratedChildWidth,
                         topOffset + mDecoratedChildHeight);
 
-            } else
-            {
+            } else {
                 //Re-attach the cached view at its new index
                 attachView(view);
                 viewCache.remove(nextPosition);
             }
 
-            if (i % mVisibleColumnCount == (mVisibleColumnCount - 1))
-            {
+            if (i % mVisibleColumnCount == (mVisibleColumnCount - 1)) {
                 leftOffset = startLeftOffset;
                 topOffset += mDecoratedChildHeight;
 
                 //During pre-layout, on each column end, apply any additional appearing views
-                if (state.isPreLayout())
-                {
+                if (state.isPreLayout()) {
                     layoutAppearingViews(recycler, view, nextPosition, removedPositions.size(), offsetPositionDelta);
                 }
-            } else
-            {
+            } else {
                 leftOffset += mDecoratedChildWidth;
             }
         }
@@ -540,8 +488,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
          * that we did not re-attach. These are views that are not currently
          * necessary because they are no longer visible.
          */
-        for (int i = 0; i < viewCache.size(); i++)
-        {
+        for (int i = 0; i < viewCache.size(); i++) {
             final View removingView = viewCache.valueAt(i);
             recycler.recycleView(removingView);
         }
@@ -554,10 +501,8 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * (or first visible), so we simply set that value and trigger onLayoutChildren()
      */
     @Override
-    public void scrollToPosition(int position)
-    {
-        if (position >= getItemCount())
-        {
+    public void scrollToPosition(int position) {
+        if (position >= getItemCount()) {
             Log.e(TAG, "Cannot scroll to " + position + ", item count is " + getItemCount());
             return;
         }
@@ -577,10 +522,8 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * to do the animation calculations.
      */
     @Override
-    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, final int position)
-    {
-        if (position >= getItemCount())
-        {
+    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, final int position) {
+        if (position >= getItemCount()) {
             Log.e(TAG, "Cannot scroll to " + position + ", item count is " + getItemCount());
             return;
         }
@@ -591,16 +534,14 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
          * of the parent depending on whether the direction of travel was positive
          * or negative.
          */
-        LinearSmoothScroller scroller = new LinearSmoothScroller(recyclerView.getContext())
-        {
+        LinearSmoothScroller scroller = new LinearSmoothScroller(recyclerView.getContext()) {
             /*
              * LinearSmoothScroller, at a minimum, just need to know the vector
              * (x/y distance) to travel in order to get from the current positioning
              * to the target.
              */
             @Override
-            public PointF computeScrollVectorForPosition(int targetPosition)
-            {
+            public PointF computeScrollVectorForPosition(int targetPosition) {
                 final int rowOffset = getGlobalRowOfPosition(targetPosition)
                         - getGlobalRowOfPosition(mFirstVisiblePosition);
                 final int columnOffset = getGlobalColumnOfPosition(targetPosition)
@@ -618,8 +559,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * in the horizontal direction.
      */
     @Override
-    public boolean canScrollHorizontally()
-    {
+    public boolean canScrollHorizontally() {
         //We do allow scrolling
         return true;
     }
@@ -630,10 +570,8 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * event somehow requires that new views be added or old views get recycled.
      */
     @Override
-    public int scrollHorizontallyBy(int dx, RecyclerView.Recycler recycler, RecyclerView.State state)
-    {
-        if (getChildCount() == 0)
-        {
+    public int scrollHorizontallyBy(int dx, RecyclerView.Recycler recycler, RecyclerView.State state) {
+        if (getChildCount() == 0) {
             return 0;
         }
 
@@ -644,8 +582,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
 
         //Optimize the case where the entire data set is too small to scroll
         int viewSpan = getDecoratedRight(bottomView) - getDecoratedLeft(topView);
-        if (viewSpan < getHorizontalSpace())
-        {
+        if (viewSpan < getHorizontalSpace()) {
             //We cannot scroll in either direction
             return 0;
         }
@@ -653,50 +590,38 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
         int delta;
         boolean leftBoundReached = getFirstVisibleColumn() == 0;
         boolean rightBoundReached = getLastVisibleColumn() >= getTotalColumnCount();
-        if (dx > 0)
-        { // Contents are scrolling left
+        if (dx > 0) { // Contents are scrolling left
             //Check right bound
-            if (rightBoundReached)
-            {
+            if (rightBoundReached) {
                 //If we've reached the last column, enforce limits
                 int rightOffset = getHorizontalSpace() - getDecoratedRight(bottomView) + getPaddingRight();
                 delta = Math.max(-dx, rightOffset);
-            } else
-            {
+            } else {
                 //No limits while the last column isn't visible
                 delta = -dx;
             }
-        } else
-        { // Contents are scrolling right
+        } else { // Contents are scrolling right
             //Check left bound
-            if (leftBoundReached)
-            {
+            if (leftBoundReached) {
                 int leftOffset = -getDecoratedLeft(topView) + getPaddingLeft();
                 delta = Math.min(-dx, leftOffset);
-            } else
-            {
+            } else {
                 delta = -dx;
             }
         }
 
         offsetChildrenHorizontal(delta);
 
-        if (dx > 0)
-        {
-            if (getDecoratedRight(topView) < 0 && !rightBoundReached)
-            {
+        if (dx > 0) {
+            if (getDecoratedRight(topView) < 0 && !rightBoundReached) {
                 fillGrid(DIRECTION_END, recycler, state);
-            } else if (!rightBoundReached)
-            {
+            } else if (!rightBoundReached) {
                 fillGrid(DIRECTION_NONE, recycler, state);
             }
-        } else
-        {
-            if (getDecoratedLeft(topView) > 0 && !leftBoundReached)
-            {
+        } else {
+            if (getDecoratedLeft(topView) > 0 && !leftBoundReached) {
                 fillGrid(DIRECTION_START, recycler, state);
-            } else if (!leftBoundReached)
-            {
+            } else if (!leftBoundReached) {
                 fillGrid(DIRECTION_NONE, recycler, state);
             }
         }
@@ -715,8 +640,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * in the vertical direction.
      */
     @Override
-    public boolean canScrollVertically()
-    {
+    public boolean canScrollVertically() {
         //We do allow scrolling
         return true;
     }
@@ -727,10 +651,8 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * event somehow requires that new views be added or old views get recycled.
      */
     @Override
-    public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state)
-    {
-        if (getChildCount() == 0)
-        {
+    public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
+        if (getChildCount() == 0) {
             return 0;
         }
 
@@ -741,8 +663,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
 
         //Optimize the case where the entire data set is too small to scroll
         int viewSpan = getDecoratedBottom(bottomView) - getDecoratedTop(topView);
-        if (viewSpan < getVerticalSpace())
-        {
+        if (viewSpan < getVerticalSpace()) {
             //We cannot scroll in either direction
             return 0;
         }
@@ -751,20 +672,16 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
         int maxRowCount = getTotalRowCount();
         boolean topBoundReached = getFirstVisibleRow() == 0;
         boolean bottomBoundReached = getLastVisibleRow() >= maxRowCount;
-        if (dy > 0)
-        { // Contents are scrolling up
+        if (dy > 0) { // Contents are scrolling up
             //Check against bottom bound
-            if (bottomBoundReached)
-            {
+            if (bottomBoundReached) {
                 //If we've reached the last row, enforce limits
                 int bottomOffset;
-                if (rowOfIndex(getChildCount() - 1) >= (maxRowCount - 1))
-                {
+                if (rowOfIndex(getChildCount() - 1) >= (maxRowCount - 1)) {
                     //We are truly at the bottom, determine how far
                     bottomOffset = getVerticalSpace() - getDecoratedBottom(bottomView)
                             + getPaddingBottom();
-                } else
-                {
+                } else {
                     /*
                      * Extra space added to account for allowing bottom space in the grid.
                      * This occurs when the overlap in the last row is not large enough to
@@ -775,43 +692,33 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
                 }
 
                 delta = Math.max(-dy, bottomOffset);
-            } else
-            {
+            } else {
                 //No limits while the last row isn't visible
                 delta = -dy;
             }
-        } else
-        { // Contents are scrolling down
+        } else { // Contents are scrolling down
             //Check against top bound
-            if (topBoundReached)
-            {
+            if (topBoundReached) {
                 int topOffset = -getDecoratedTop(topView) + getPaddingTop();
 
                 delta = Math.min(-dy, topOffset);
-            } else
-            {
+            } else {
                 delta = -dy;
             }
         }
 
         offsetChildrenVertical(delta);
 
-        if (dy > 0)
-        {
-            if (getDecoratedBottom(topView) < 0 && !bottomBoundReached)
-            {
+        if (dy > 0) {
+            if (getDecoratedBottom(topView) < 0 && !bottomBoundReached) {
                 fillGrid(DIRECTION_DOWN, recycler, state);
-            } else if (!bottomBoundReached)
-            {
+            } else if (!bottomBoundReached) {
                 fillGrid(DIRECTION_NONE, recycler, state);
             }
-        } else
-        {
-            if (getDecoratedTop(topView) > 0 && !topBoundReached)
-            {
+        } else {
+            if (getDecoratedTop(topView) > 0 && !topBoundReached) {
                 fillGrid(DIRECTION_UP, recycler, state);
-            } else if (!topBoundReached)
-            {
+            } else if (!topBoundReached) {
                 fillGrid(DIRECTION_NONE, recycler, state);
             }
         }
@@ -830,12 +737,9 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * if a specific child view can be returned.
      */
     @Override
-    public View findViewByPosition(int position)
-    {
-        for (int i = 0; i < getChildCount(); i++)
-        {
-            if (positionOfIndex(i) == position)
-            {
+    public View findViewByPosition(int position) {
+        for (int i = 0; i < getChildCount(); i++) {
+            if (positionOfIndex(i) == position) {
                 return getChildAt(i);
             }
         }
@@ -853,67 +757,55 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * will receive when added.
      */
     @Override
-    public RecyclerView.LayoutParams generateDefaultLayoutParams()
-    {
+    public RecyclerView.LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     @Override
-    public RecyclerView.LayoutParams generateLayoutParams(Context c, AttributeSet attrs)
-    {
+    public RecyclerView.LayoutParams generateLayoutParams(Context c, AttributeSet attrs) {
         return new LayoutParams(c, attrs);
     }
 
     @Override
-    public RecyclerView.LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp)
-    {
-        if (lp instanceof ViewGroup.MarginLayoutParams)
-        {
+    public RecyclerView.LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
+        if (lp instanceof ViewGroup.MarginLayoutParams) {
             return new LayoutParams((ViewGroup.MarginLayoutParams) lp);
-        } else
-        {
+        } else {
             return new LayoutParams(lp);
         }
     }
 
     @Override
-    public boolean checkLayoutParams(RecyclerView.LayoutParams lp)
-    {
+    public boolean checkLayoutParams(RecyclerView.LayoutParams lp) {
         return lp instanceof LayoutParams;
     }
 
-    public static class LayoutParams extends RecyclerView.LayoutParams
-    {
+    public static class LayoutParams extends RecyclerView.LayoutParams {
 
         //Current row in the grid
         public int row;
         //Current column in the grid
         public int column;
 
-        public LayoutParams(Context c, AttributeSet attrs)
-        {
+        public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
         }
 
-        public LayoutParams(int width, int height)
-        {
+        public LayoutParams(int width, int height) {
             super(width, height);
         }
 
-        public LayoutParams(ViewGroup.MarginLayoutParams source)
-        {
+        public LayoutParams(ViewGroup.MarginLayoutParams source) {
             super(source);
         }
 
-        public LayoutParams(ViewGroup.LayoutParams source)
-        {
+        public LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
         }
 
-        public LayoutParams(RecyclerView.LayoutParams source)
-        {
+        public LayoutParams(RecyclerView.LayoutParams source) {
             super(source);
         }
     }
@@ -923,18 +815,15 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      */
 
     /* Helper to obtain and place extra appearing views */
-    private void layoutAppearingViews(RecyclerView.Recycler recycler, View referenceView, int referencePosition, int extraCount, int offset)
-    {
+    private void layoutAppearingViews(RecyclerView.Recycler recycler, View referenceView, int referencePosition, int extraCount, int offset) {
         //Nothing to do...
         if (extraCount < 1) return;
 
         //FIXME: This code currently causes double layout of views that are still visible…
-        for (int extra = 1; extra <= extraCount; extra++)
-        {
+        for (int extra = 1; extra <= extraCount; extra++) {
             //Grab the next position after the reference
             final int extraPosition = referencePosition + extra;
-            if (extraPosition < 0 || extraPosition >= getItemCount())
-            {
+            if (extraPosition < 0 || extraPosition >= getItemCount()) {
                 //Can't do anything with this
                 continue;
             }
@@ -957,8 +846,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
     }
 
     /* Helper to place a disappearing view */
-    private void layoutDisappearingView(View disappearingChild)
-    {
+    private void layoutDisappearingView(View disappearingChild) {
         /*
          * LayoutManager has a special method for attaching views that
          * will only be around long enough to animate.
@@ -978,8 +866,7 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
 
 
     /* Helper to lay out appearing/disappearing children */
-    private void layoutTempChildView(View child, int rowDelta, int colDelta, View referenceView)
-    {
+    private void layoutTempChildView(View child, int rowDelta, int colDelta, View referenceView) {
         //Set the layout position to the global row/column difference from the reference view
         int layoutTop = getDecoratedTop(referenceView) + rowDelta * mDecoratedChildHeight;
         int layoutLeft = getDecoratedLeft(referenceView) + colDelta * mDecoratedChildWidth;
@@ -995,14 +882,12 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      */
 
     /* Return the overall column index of this position in the global layout */
-    private int getGlobalColumnOfPosition(int position)
-    {
+    private int getGlobalColumnOfPosition(int position) {
         return position % mTotalColumnCount;
     }
 
     /* Return the overall row index of this position in the global layout */
-    private int getGlobalRowOfPosition(int position)
-    {
+    private int getGlobalRowOfPosition(int position) {
         return position / mTotalColumnCount;
     }
 
@@ -1010,79 +895,65 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      * Mapping between child view indices and adapter data
      * positions helps fill the proper views during scrolling.
      */
-    private int positionOfIndex(int childIndex)
-    {
+    private int positionOfIndex(int childIndex) {
         int row = childIndex / mVisibleColumnCount;
         int column = childIndex % mVisibleColumnCount;
 
         return mFirstVisiblePosition + (row * getTotalColumnCount()) + column;
     }
 
-    private int rowOfIndex(int childIndex)
-    {
+    private int rowOfIndex(int childIndex) {
         int position = positionOfIndex(childIndex);
 
         return position / getTotalColumnCount();
     }
 
-    private int getFirstVisibleColumn()
-    {
+    private int getFirstVisibleColumn() {
         return (mFirstVisiblePosition % getTotalColumnCount());
     }
 
-    private int getLastVisibleColumn()
-    {
+    private int getLastVisibleColumn() {
         return getFirstVisibleColumn() + mVisibleColumnCount;
     }
 
-    private int getFirstVisibleRow()
-    {
+    private int getFirstVisibleRow() {
         return (mFirstVisiblePosition / getTotalColumnCount());
     }
 
-    private int getLastVisibleRow()
-    {
+    private int getLastVisibleRow() {
         return getFirstVisibleRow() + mVisibleRowCount;
     }
 
-    private int getVisibleChildCount()
-    {
+    private int getVisibleChildCount() {
         return mVisibleColumnCount * mVisibleRowCount;
     }
 
-    private int getTotalColumnCount()
-    {
-        if (getItemCount() < mTotalColumnCount)
-        {
+    private int getTotalColumnCount() {
+        if (getItemCount() < mTotalColumnCount) {
             return getItemCount();
         }
 
         return mTotalColumnCount;
     }
 
-    private int getTotalRowCount()
-    {
-        if (getItemCount() == 0 || mTotalColumnCount == 0)
-        {
+    private int getTotalRowCount() {
+        if (getItemCount() == 0 || mTotalColumnCount == 0) {
             return 0;
         }
         int maxRow = getItemCount() / mTotalColumnCount;
         //Bump the row count if it's not exactly even
-        if (getItemCount() % mTotalColumnCount != 0)
-        {
+        if (getItemCount() % mTotalColumnCount != 0) {
             maxRow++;
         }
 
         return maxRow;
     }
 
-    private int getHorizontalSpace()
-    {
+    private int getHorizontalSpace() {
         return getWidth() - getPaddingRight() - getPaddingLeft();
     }
 
-    private int getVerticalSpace()
-    {
+    private int getVerticalSpace() {
         return getHeight() - getPaddingBottom() - getPaddingTop();
     }
 }
