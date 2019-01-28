@@ -240,7 +240,6 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
      */
     private fun setUpRecyclerView() {
         SKRowAdapter = RowAdapter(mContext, rows)
-
         val manager = FixedGridLayoutManager()
         manager.setTotalColumnCount(1)
         rvHeader.layoutManager = manager

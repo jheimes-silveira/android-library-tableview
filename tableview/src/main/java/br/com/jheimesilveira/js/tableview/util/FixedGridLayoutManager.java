@@ -326,7 +326,11 @@ public class FixedGridLayoutManager extends RecyclerView.LayoutManager
      */
     private void updateWindowSizing()
     {
-        mVisibleColumnCount = (getHorizontalSpace() / mDecoratedChildWidth) + 1;
+        try {
+            mVisibleColumnCount = (getHorizontalSpace() / mDecoratedChildWidth) + 1;
+        } catch (Exception e) {
+            mVisibleColumnCount = 1;
+        }
         if (getHorizontalSpace() % mDecoratedChildWidth > 0)
         {
             mVisibleColumnCount++;
