@@ -69,6 +69,56 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         initHeaderRows()
         initCorner(rowsHeader)
         setUpRecyclerView()
+        setStartEventsRecycler()
+    }
+
+    private fun setStartEventsRecycler() {
+        rvRows.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                scrollX += dx
+
+                hsvHeaderColumn.scrollTo(scrollX, 0)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        })
+
+        rvRows.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                scrollY += dy
+
+                svHeaderRow.scrollTo(0, scrollY)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        })
+
+        svHeaderRow.setOnTouchListener { _, _ -> true }
+        hsvHeaderColumn.setOnTouchListener { _, _ -> true }
+
+        val viewTreeObserver = rvRows.viewTreeObserver
+        if (viewTreeObserver.isAlive) {
+            viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    rvRows.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    val countTotalWidth = countTotalWidth()
+                    if (rvRows.width > countTotalWidth()) {
+                        recalcWidthCellsMaxDisplay(countTotalWidth)
+                        setUpRecyclerView()
+                        initHeaderColumns()
+                        initHeaderRows()
+                    }
+                }
+            })
+        }
     }
 
     private fun initViews() {
@@ -239,53 +289,6 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         rvRows.layoutManager = manager
         rvRows.adapter = rowAdapter
 //        rvRows.addItemDecoration(DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
-
-
-        rvRows.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                scrollX += dx
-
-                hsvHeaderColumn.scrollTo(scrollX, 0)
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-            }
-        })
-
-        rvRows.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                scrollY += dy
-
-                svHeaderRow.scrollTo(0, scrollY)
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-            }
-        })
-
-        svHeaderRow.setOnTouchListener { _, _ -> true }
-        hsvHeaderColumn.setOnTouchListener { _, _ -> true }
-
-        val viewTreeObserver = rvRows.viewTreeObserver
-        if (viewTreeObserver.isAlive) {
-            viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    rvRows.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    val countTotalWidth = countTotalWidth()
-                    if (rvRows.width > countTotalWidth()) {
-                        recalcWidthCellsMaxDisplay(countTotalWidth)
-                        setUpRecyclerView()
-                        initHeaderColumns()
-                    }
-                }
-            })
-        }
     }
 
     private fun countTotalWidth(): Int {
