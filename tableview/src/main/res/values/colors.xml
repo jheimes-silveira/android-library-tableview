@@ -8,6 +8,7 @@
     <color name="colorSecondaryText">#757575</color>
     <color name="colorDivider">#BDBDBD</color>
     <color name="colorRow">#E5E6EC</color>
+    <color name="colorRow20">#20E5E6EC</color>
     <color name="silver">#C0C0C0</color>
     <color name="silver50">#50C0C0C0</color>
 </resources>

@@ -40,23 +40,23 @@ object GenerateMock {
         skCell = Cell(data = "355464543")
         array.add(skCell)
 
-//        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
-//        array.add(skCell)
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
+        array.add(skCell)
 
-//        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam elementum lacus mi, in ultricies eros imperdiet sit amet. Donec vel purus mauris.")
-//        array.add(skCell)
-//
-//        skCell = Cell(data = "Lorem")
-//        array.add(skCell)
-//
-//        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
-//        array.add(skCell)
-//
-//        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam elementum lacus mi, in ultricies eros imperdiet sit amet. Donec vel purus mauris.")
-//        array.add(skCell)
-//
-//        skCell = Cell(data = "R$ 56.573,00")
-//        array.add(skCell)
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam elementum lacus mi, in ultricies eros imperdiet sit amet. Donec vel purus mauris.")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
+        array.add(skCell)
+
+        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam elementum lacus mi, in ultricies eros imperdiet sit amet. Donec vel purus mauris.")
+        array.add(skCell)
+
+        skCell = Cell(data = "R$ 56.573,00")
+        array.add(skCell)
 //
 //        skCell = Cell(data = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ")
 //        array.add(skCell)

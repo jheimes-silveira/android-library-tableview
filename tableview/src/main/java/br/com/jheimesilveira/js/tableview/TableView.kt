@@ -2,11 +2,14 @@ package br.com.jheimesilveira.js.tableview
 
 import android.content.Context
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.view.WindowManager
 import android.widget.*
 import br.com.jheimesilveira.js.tableview.adapter.RowAdapter
 import br.com.jheimesilveira.js.tableview.model.ColumnHeader
@@ -25,6 +28,11 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     lateinit var columnsHeader: ArrayList<ColumnHeader>
     lateinit var rowsHeader: ArrayList<RowHeader>
 
+    var striped: Boolean = false
+    var showRowHeader: Boolean = true
+    var showColumnHeader: Boolean = true
+    var percentageProportion: Float = 0.09f
+
     lateinit var rvRows: RecyclerView
     lateinit var hsvHeaderColumn: HorizontalScrollView
     lateinit var svHeaderRow: ScrollView
@@ -34,13 +42,18 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     lateinit var rowAdapter: RowAdapter
     lateinit var tvCorner: TextView
 
+    lateinit var onScrollObserverColumnHeader: RecyclerView.OnScrollListener
+    lateinit var onScrollObserverRowHeader: RecyclerView.OnScrollListener
+
+    private var heightPixelsDisplay: Int = 0
+    private var widthPixelsDisplay: Int = 0
+
     init {
 //        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TableView, 0, 0)
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.tableview, this, true)
 
         initViews()
-
 //        mTitle = typedArray.getString(R.styleable.ItemSelectView_titleText)
 //        mTitleDialog = typedArray.getString(R.styleable.ItemSelectView_titleTextDialog)
 
@@ -50,11 +63,11 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
 //        typedArray.recycle()
     }
 
-    fun startAllItems(
+    fun allItens(
             rows: ArrayList<Row>,
             columnsHeader: ArrayList<ColumnHeader> = ArrayList(),
             rowsHeader: ArrayList<RowHeader> = ArrayList()) {
-
+        getScreenResolution(context)
         verifyIfRowsEqualsColumns(rows)
         setGenerateColumnsHeader(rows, columnsHeader)
         setGenerateRowsHeader(rows, rowsHeader)
@@ -64,30 +77,18 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         this.rows = rows
         this.rowsHeader = rowsHeader
         this.columnsHeader = columnsHeader
+    }
 
+    fun startDrawer() {
         initHeaderColumns()
         initHeaderRows()
         initCorner(rowsHeader)
-        setUpRecyclerView()
         setStartEventsRecycler()
+        setUpRecyclerView()
     }
 
     private fun setStartEventsRecycler() {
-        rvRows.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                scrollX += dx
-
-                hsvHeaderColumn.scrollTo(scrollX, 0)
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-            }
-        })
-
-        rvRows.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        onScrollObserverRowHeader = object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -99,7 +100,20 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
             }
-        })
+        }
+        onScrollObserverColumnHeader = object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                scrollX += dx
+
+                hsvHeaderColumn.scrollTo(scrollX, 0)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        }
 
         svHeaderRow.setOnTouchListener { _, _ -> true }
         hsvHeaderColumn.setOnTouchListener { _, _ -> true }
@@ -130,13 +144,23 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         svHeaderRow = findViewById(R.id.svHeaderRow)
     }
 
+    private fun getScreenResolution(context: Context) {
+        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = wm.defaultDisplay
+        val metrics = DisplayMetrics()
+        display.getMetrics(metrics)
+        widthPixelsDisplay = metrics.widthPixels
+        heightPixelsDisplay = metrics.heightPixels
+    }
 
     private fun setGenerateIndexRows(rows: ArrayList<Row>) {
         var i = 0
         var j = 0
 
         rows.map { row ->
+            if (row.height == 0) row.height = generateDefaultHeigthByPorcent()
             row.cells.map { cell ->
+                if (cell.height == 0) cell.height = generateDefaultHeigthByPorcent()
                 cell.i = i
                 cell.j = j
                 j++
@@ -149,16 +173,18 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         val sizeRows = rows.size
         val sizeRowsHeader = rowsHeader.size
 
-
-        if (sizeRowsHeader >= sizeRows) {
-            return
+        if (sizeRowsHeader < sizeRows) {
+            for (i in sizeRowsHeader until sizeRows) {
+                rowsHeader.add(RowHeader(
+                        index = i,
+                        data = "${i + 1}")
+                )
+            }
         }
 
-        for (i in sizeRowsHeader until sizeRows) {
-            rowsHeader.add(RowHeader(
-                    index = i,
-                    data = "${i + 1}")
-            )
+        rowsHeader.map { row->
+            if (row.height == 0) row.height = generateDefaultHeigthByPorcent()
+            if (row.width == 0) row.width = generateDefaultHeigthByPorcent()
         }
     }
 
@@ -166,17 +192,24 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         val sizeColumns = rows[0].cells.size
         val sizeColumnsHeader = columnsHeader.size
 
-
-        if (sizeColumnsHeader >= sizeColumns) {
-            return
+        // criar de forma ordenada elementos de header que não tenha sido passado
+        if (sizeColumnsHeader < sizeColumns) {
+            for (i in sizeColumnsHeader until sizeColumns) {
+                columnsHeader.add(ColumnHeader(
+                        index = i,
+                        data = "${i + 1}")
+                )
+            }
         }
 
-        for (i in sizeColumnsHeader until sizeColumns) {
-            columnsHeader.add(ColumnHeader(
-                    index = i,
-                    data = "${i + 1}")
-            )
+        columnsHeader.map { column->
+            if (column.height == 0) column.height = generateDefaultHeigthByPorcent()
+            if (column.width == 0) column.width = generateDefaultHeigthByPorcent()
         }
+    }
+
+    private fun generateDefaultHeigthByPorcent(): Int {
+        return (widthPixelsDisplay.toFloat() * percentageProportion).toInt()
     }
 
     private fun verifyIfRowsEqualsColumns(rows: ArrayList<Row>) {
@@ -252,9 +285,11 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             textViewCell.text = i.data
             val lp = RelativeLayout.LayoutParams(i.width, i.height)
             textViewCell.layoutParams = lp
-            textViewCell.gravity = Gravity.CENTER
             textViewCell.maxLines = 1
+            textViewCell.setTypeface(null, Typeface.BOLD)
             textViewCell.setBackgroundResource(R.drawable.border_contorn_column_header)
+            textViewCell.gravity = Gravity.CENTER_VERTICAL
+            textViewCell.setPadding(26, 0, 0, 0)
             llHeaderColumn.addView(textViewCell)
         }
     }
@@ -283,12 +318,17 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
      * Handles RecyclerView for the action
      */
     private fun setUpRecyclerView() {
-        rowAdapter = RowAdapter(mContext, rows)
+        rowAdapter = RowAdapter(mContext, rows, striped)
         val manager = FixedGridLayoutManager()
         manager.setTotalColumnCount(1)
         rvRows.layoutManager = manager
         rvRows.adapter = rowAdapter
 //        rvRows.addItemDecoration(DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
+        rvRows.removeOnScrollListener(onScrollObserverColumnHeader)
+        rvRows.addOnScrollListener(onScrollObserverColumnHeader)
+
+        rvRows.removeOnScrollListener(onScrollObserverRowHeader)
+        rvRows.addOnScrollListener(onScrollObserverRowHeader)
     }
 
     private fun countTotalWidth(): Int {
@@ -302,11 +342,11 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     private fun recalcWidthCellsMaxDisplay(countTotalWidth: Int) {
         val diff = (rvRows.width - countTotalWidth) / rows[0].cells.size
 
-        columnsHeader.map {column ->
+        columnsHeader.map { column ->
             column.width += diff
         }
-        rows.map { row->
-            row.cells.map { cell->
+        rows.map { row ->
+            row.cells.map { cell ->
                 cell.width += diff
             }
         }

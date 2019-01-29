@@ -12,8 +12,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        tableview.startAllItems(
+        tableview.allItens(
                 rows = GenerateMock.prepareData(300, 20))
+        tableview.striped = true
+        tableview.startDrawer()
     }
 
 }

@@ -6,4 +6,4 @@ open class Cell(
         var j: Int? = null,
         var data: String = "",
         var width: Int = 0,
-        var height: Int = 100)
+        var height: Int = 0)

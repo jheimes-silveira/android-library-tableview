@@ -4,5 +4,5 @@ class RowHeader(
         index: Int = 0,
         id: String? = null,
         data: String = "",
-        width: Int = 100,
-        height: Int = 100) : Cell(id = id, data = data, width = width, height = height)
+        width: Int = 0,
+        height: Int = 0) : Cell(id = id, data = data, width = width, height = height)

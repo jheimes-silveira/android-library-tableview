@@ -1,5 +1,6 @@
 package br.com.jheimesilveira.js.tableview.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
@@ -14,7 +15,9 @@ import br.com.jheimesilveira.js.tableview.model.Row
 import java.util.*
 
 
-class RowAdapter(private val context: Context, private var rows: ArrayList<Row>) : RecyclerView.Adapter<RowAdapter.ClubViewHolder>() {
+class RowAdapter(private val context: Context,
+                 private var rows: ArrayList<Row>,
+                 var striped: Boolean) : RecyclerView.Adapter<RowAdapter.ClubViewHolder>() {
 
     companion object {
         private val TYPE_ROW = 0
@@ -22,16 +25,22 @@ class RowAdapter(private val context: Context, private var rows: ArrayList<Row>)
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position % 2 == 0) {
+        return if (striped && position % 2 == 0) {
             TYPE_ROW_COLORFUL
         } else TYPE_ROW
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ClubViewHolder {
-        val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.row_layout, viewGroup, false)
-        return ClubViewHolder(view)
+        return if (viewType == TYPE_ROW) {
+            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.row_layout, viewGroup, false)
+            ClubViewHolder(view)
+        } else {
+            val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.row_colorful_layout, viewGroup, false)
+            ClubViewHolder(view)
+        }
     }
 
+    @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: ClubViewHolder, position: Int) {
         val skRow = this.rows[position]
         holder.llBody.removeAllViews()
@@ -42,8 +51,8 @@ class RowAdapter(private val context: Context, private var rows: ArrayList<Row>)
             textViewCell.text = i.data
             val lp = RelativeLayout.LayoutParams(width, skRow.height)
             textViewCell.layoutParams = lp
-            textViewCell.gravity = Gravity.CENTER_VERTICAL
             textViewCell.maxLines = 1
+            textViewCell.gravity = Gravity.CENTER_VERTICAL
             textViewCell.setPadding(26, 0, 0, 0)
             textViewCell.setBackgroundResource(R.drawable.border_contorn_row)
             holder.llBody.addView(textViewCell)
