@@ -44,6 +44,7 @@
         android:layout_toRightOf="@id/svHeaderRow">
 
         <LinearLayout
+            android:gravity="center"
             android:id="@+id/llHeaderColumn"
             android:orientation="horizontal"
             android:layout_width="wrap_content"

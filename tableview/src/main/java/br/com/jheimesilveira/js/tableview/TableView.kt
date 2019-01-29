@@ -6,13 +6,15 @@ import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.*
 import br.com.jheimesilveira.js.tableview.adapter.RowAdapter
 import br.com.jheimesilveira.js.tableview.model.ColumnHeader
 import br.com.jheimesilveira.js.tableview.model.Row
 import br.com.jheimesilveira.js.tableview.model.RowHeader
 import br.com.jheimesilveira.js.tableview.util.FixedGridLayoutManager
-import java.util.ArrayList
+import java.util.*
+
 
 class TableView @JvmOverloads constructor(var mContext: Context, attrs: AttributeSet? = null) : LinearLayout(mContext, attrs) {
 
@@ -105,7 +107,6 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         for (i in sizeRowsHeader until sizeRows) {
             rowsHeader.add(RowHeader(
                     index = i,
-                    id = "${i + 1}",
                     data = "${i + 1}")
             )
         }
@@ -123,7 +124,6 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         for (i in sizeColumnsHeader until sizeColumns) {
             columnsHeader.add(ColumnHeader(
                     index = i,
-                    id = "${i + 1}",
                     data = "${i + 1}")
             )
         }
@@ -196,12 +196,6 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
 
     private fun initHeaderColumns() {
         llHeaderColumn.removeAllViews()
-//        if (skColumnHeader == null) {
-//            hsvHeaderColumn.visibility = View.GONE
-//            return
-//        }
-//        hsvHeaderColumn.visibility = View.VISIBLE
-//
 
         for (i in columnsHeader) {
             val textViewCell = TextView(mContext)
@@ -277,5 +271,41 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
 
         svHeaderRow.setOnTouchListener { _, _ -> true }
         hsvHeaderColumn.setOnTouchListener { _, _ -> true }
+
+        val viewTreeObserver = rvRows.viewTreeObserver
+        if (viewTreeObserver.isAlive) {
+            viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    rvRows.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    val countTotalWidth = countTotalWidth()
+                    if (rvRows.width > countTotalWidth()) {
+                        recalcWidthCellsMaxDisplay(countTotalWidth)
+                        setUpRecyclerView()
+                        initHeaderColumns()
+                    }
+                }
+            })
+        }
+    }
+
+    private fun countTotalWidth(): Int {
+        var maxWithColumn = 0
+        rows[0].cells.map { c ->
+            maxWithColumn += c.width
+        }
+        return maxWithColumn
+    }
+
+    private fun recalcWidthCellsMaxDisplay(countTotalWidth: Int) {
+        val diff = (rvRows.width - countTotalWidth) / rows[0].cells.size
+
+        columnsHeader.map {column ->
+            column.width += diff
+        }
+        rows.map { row->
+            row.cells.map { cell->
+                cell.width += diff
+            }
+        }
     }
 }
