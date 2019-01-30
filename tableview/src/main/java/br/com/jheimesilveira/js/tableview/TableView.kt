@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
@@ -19,7 +20,10 @@ import br.com.jheimesilveira.js.tableview.util.FixedGridLayoutManager
 import java.util.*
 
 
-class TableView @JvmOverloads constructor(var mContext: Context, attrs: AttributeSet? = null) : LinearLayout(mContext, attrs) {
+class TableView @JvmOverloads constructor(var mContext: Context, attrs: AttributeSet? = null) : LinearLayout(mContext, attrs), OnGlobalLayoutListener {
+    override fun onGlobalLayout() {
+
+    }
 
     internal var scrollX = 0
     internal var scrollY = 0
@@ -64,6 +68,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             rows: ArrayList<Row>,
             columnsHeader: ArrayList<ColumnHeader> = ArrayList(),
             rowsHeader: ArrayList<RowHeader> = ArrayList()) {
+        log("start allItens")
         getScreenResolution(context)
         verifyIfRowsEqualsColumns(rows)
         setGenerateColumnsHeader(rows, columnsHeader)
@@ -77,6 +82,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     }
 
     fun startDrawer() {
+        log("startDrawer")
         initHeaderColumns()
         initHeaderRows()
         initCorner(rowsHeader)
@@ -85,6 +91,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     }
 
     private fun initStartEventsRecycler() {
+        log("initStartEventsRecycler")
         rvRows.clearOnScrollListeners()
         scrollY = 0
         scrollX = 0
@@ -107,23 +114,23 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         if (isCanObserverWidth) {
             val countTotalWidth = countTotalWidth()
             if (rvRows.width > countTotalWidth) {
+                log("rvRows.width: ${rvRows.width} countTotalWidth: $countTotalWidth")
                 recalcWidthCellsMaxDisplay(countTotalWidth)
                 startDrawer()
             }
         }
 
         if (rvRows.viewTreeObserver.isAlive) {
-            rvRows.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    rvRows.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    isCanObserverWidth = true
-                    val countTotalWidth = countTotalWidth()
-                    if (rvRows.width > countTotalWidth) {
-                        recalcWidthCellsMaxDisplay(countTotalWidth)
-                        startDrawer()
-                    }
+            rvRows.viewTreeObserver.addOnGlobalLayoutListener {
+            rvRows.viewTreeObserver.removeOnGlobalLayoutListener {}
+                isCanObserverWidth = true
+                val countTotalWidth = countTotalWidth()
+                if (rvRows.width > countTotalWidth) {
+                    log("rvRows.width: ${rvRows.width} countTotalWidth: $countTotalWidth")
+                    recalcWidthCellsMaxDisplay(countTotalWidth)
+                    startDrawer()
                 }
-            })
+            }
         }
     }
 
@@ -143,6 +150,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         display.getMetrics(metrics)
         widthPixelsDisplay = metrics.widthPixels
         heightPixelsDisplay = metrics.heightPixels
+        log("start getScreenResolution : height=$heightPixelsDisplay")
     }
 
     private fun setGenerateIndexRows(rows: ArrayList<Row>) {
@@ -178,6 +186,8 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             if (row.height == 0) row.height = generateDefaultHeigthByPorcent()
             if (row.width == 0) row.width = generateDefaultHeigthByPorcent()
         }
+
+        log("setGenerateRowsHeader")
     }
 
     private fun setGenerateColumnsHeader(rows: ArrayList<Row>, columnsHeader: ArrayList<ColumnHeader>) {
@@ -198,6 +208,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             if (column.height == 0) column.height = generateDefaultHeigthByPorcent()
             if (column.width == 0) column.width = generateDefaultHeigthByPorcent()
         }
+        log("setGenerateColumnsHeader ${columnsHeader}")
     }
 
     private fun generateDefaultHeigthByPorcent(): Int {
@@ -211,6 +222,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
                 throw IllegalArgumentException("A quantidade de itens por colunas em todas as linhas devem ser iguais")
             }
         }
+        log("verifyIfRowsEqualsColumns true")
     }
 
     private fun setGenerateMaxWidthPerColumn(
@@ -224,9 +236,10 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
 
             // Caso já tenha algum valor, não ira procurar uma largura maxima para a linha corrente
             var maxWidth = 0
-
+            log("setGenerateMaxWidthPerColumn index j= $j")
             for (i: Int in 0 until sizeI) {
                 val width = getConverStringToWidth(rows[i].cells[j].data)
+                log("setGenerateMaxWidthPerColumn index i= $i width= $width")
                 if (maxWidth < width) {
                     maxWidth = width
                 }
@@ -235,12 +248,13 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             for (i: Int in 0 until sizeI) {
                 rows[i].cells[j].width = maxWidth
             }
-
+            log("setGenerateMaxWidthPerColumn max width= $maxWidth")
             columnsHeader[j].width = maxWidth
         }
     }
 
     private fun getConverStringToWidth(text: String): Int {
+        log("getConverStringToWidth")
         val textViewCell = TextView(mContext)
         textViewCell.text = text
 //        val lp = RelativeLayout.LayoutParams(
@@ -250,7 +264,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
 
         val rect = Rect()
         textViewCell.paint.getTextBounds(textViewCell.text.toString(), 0, textViewCell.text.length, rect)
-        return rect.width() + 60
+        return rect.width() + 50
     }
 
     private fun getMaxCaracter(rows: ArrayList<Row>): Int {
@@ -270,6 +284,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     }
 
     private fun initHeaderColumns() {
+        log("initHeaderColumns")
         llHeaderColumn.removeAllViews()
 
         for (i in columnsHeader) {
@@ -289,6 +304,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     }
 
     private fun initHeaderRows() {
+        log("initHeaderRows")
         llHeaderRow.removeAllViews()
 
         for (i in rowsHeader) {
@@ -309,6 +325,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
      * Handles RecyclerView for the action
      */
     private fun setUpRecyclerView() {
+        log("setUpRecyclerView")
         rowAdapter = RowAdapter(mContext, rows, striped)
         val manager = FixedGridLayoutManager()
         manager.setTotalColumnCount(1)
@@ -317,6 +334,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     }
 
     private fun countTotalWidth(): Int {
+        log("countTotalWidth")
         var maxWithColumn = 0
         rows[0].cells.map { c ->
             maxWithColumn += c.width
@@ -325,15 +343,25 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     }
 
     private fun recalcWidthCellsMaxDisplay(countTotalWidth: Int) {
-        val diff = (rvRows.width - countTotalWidth) / rows[0].cells.size
+        log("recalcWidthCellsMaxDisplay")
+        var diff = (rvRows.width - countTotalWidth) / rows[0].cells.size
 
+        while ((diff * rows[0].cells.size) + countTotalWidth < rvRows.width) {
+            diff++
+        }
         columnsHeader.map { column ->
             column.width += diff
         }
+
         rows.map { row ->
+            row.width += diff
             row.cells.map { cell ->
                 cell.width += diff
             }
         }
+    }
+
+    private fun log(log: String) {
+        Log.d("lib-TableView", log)
     }
 }
