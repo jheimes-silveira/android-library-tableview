@@ -21,9 +21,7 @@ import java.util.*
 
 
 class TableView @JvmOverloads constructor(var mContext: Context, attrs: AttributeSet? = null) : LinearLayout(mContext, attrs), OnGlobalLayoutListener {
-    override fun onGlobalLayout() {
-
-    }
+    override fun onGlobalLayout() {}
 
     internal var scrollX = 0
     internal var scrollY = 0
@@ -122,7 +120,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
 
         if (rvRows.viewTreeObserver.isAlive) {
             rvRows.viewTreeObserver.addOnGlobalLayoutListener {
-            rvRows.viewTreeObserver.removeOnGlobalLayoutListener {}
+                rvRows.viewTreeObserver.removeOnGlobalLayoutListener {}
                 isCanObserverWidth = true
                 val countTotalWidth = countTotalWidth()
                 if (rvRows.width > countTotalWidth) {
@@ -182,7 +180,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             }
         }
 
-        rowsHeader.map { row->
+        rowsHeader.map { row ->
             if (row.height == 0) row.height = generateDefaultHeigthByPorcent()
             if (row.width == 0) row.width = generateDefaultHeigthByPorcent()
         }
@@ -204,7 +202,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             }
         }
 
-        columnsHeader.map { column->
+        columnsHeader.map { column ->
             if (column.height == 0) column.height = generateDefaultHeigthByPorcent()
             if (column.width == 0) column.width = generateDefaultHeigthByPorcent()
         }

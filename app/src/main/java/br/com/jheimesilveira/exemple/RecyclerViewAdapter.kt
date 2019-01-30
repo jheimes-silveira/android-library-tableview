@@ -45,8 +45,10 @@ class RecyclerViewAdapter(var mContext: Context, var dataSet: ArrayList<TableVie
             }
             false
         }
+        android.os.Handler().postDelayed({
+            holder.itemView.table.startDrawer()
+        },10)
 
-        holder.itemView.table.startDrawer()
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

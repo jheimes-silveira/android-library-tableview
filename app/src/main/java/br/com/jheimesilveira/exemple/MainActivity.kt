@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         model.columnsHeader = GenerateMock.getPrepareColumnHeader( etColumn.text.toString().toInt())
         tableview.allItens(
                 rows = GenerateMock.prepareData(etRows.text.toString().toInt(), etColumn.text.toString().toInt()))
-        tableview.striped = true
+//        tableview.striped = true
         tableview.startDrawer()
     }
 

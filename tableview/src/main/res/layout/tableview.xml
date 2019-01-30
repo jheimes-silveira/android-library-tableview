@@ -20,6 +20,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:background="@color/colorRow"
             android:id="@+id/llHeaderRow"
             android:orientation="vertical"
             android:layout_width="wrap_content"
@@ -36,6 +37,7 @@
     </ScrollView>
 
     <HorizontalScrollView
+        android:background="@color/colorRow"
         android:layout_toEndOf="@id/svHeaderRow"
         android:layout_width="match_parent"
         android:id="@+id/hsvHeaderColumn"
