@@ -42,17 +42,14 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     lateinit var rowAdapter: RowAdapter
     lateinit var tvCorner: TextView
 
-    lateinit var onScrollObserverColumnHeader: RecyclerView.OnScrollListener
-    lateinit var onScrollObserverRowHeader: RecyclerView.OnScrollListener
-
     private var heightPixelsDisplay: Int = 0
     private var widthPixelsDisplay: Int = 0
+    private var isCanObserverWidth: Boolean = false
 
     init {
 //        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TableView, 0, 0)
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.tableview, this, true)
-
         initViews()
 //        mTitle = typedArray.getString(R.styleable.ItemSelectView_titleText)
 //        mTitleDialog = typedArray.getString(R.styleable.ItemSelectView_titleTextDialog)
@@ -83,52 +80,47 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         initHeaderColumns()
         initHeaderRows()
         initCorner(rowsHeader)
-        setStartEventsRecycler()
         setUpRecyclerView()
+        initStartEventsRecycler()
     }
 
-    private fun setStartEventsRecycler() {
-        onScrollObserverRowHeader = object : RecyclerView.OnScrollListener() {
+    private fun initStartEventsRecycler() {
+        rvRows.clearOnScrollListeners()
+        scrollY = 0
+        scrollX = 0
+        rvRows.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
                 scrollY += dy
-
-                svHeaderRow.scrollTo(0, scrollY)
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-            }
-        }
-        onScrollObserverColumnHeader = object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
                 scrollX += dx
 
+                svHeaderRow.scrollTo(0, scrollY)
                 hsvHeaderColumn.scrollTo(scrollX, 0)
             }
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
             }
+        })
+
+        if (isCanObserverWidth) {
+            val countTotalWidth = countTotalWidth()
+            if (rvRows.width > countTotalWidth) {
+                recalcWidthCellsMaxDisplay(countTotalWidth)
+                startDrawer()
+            }
         }
 
-        svHeaderRow.setOnTouchListener { _, _ -> true }
-        hsvHeaderColumn.setOnTouchListener { _, _ -> true }
-
-        val viewTreeObserver = rvRows.viewTreeObserver
-        if (viewTreeObserver.isAlive) {
-            viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+        if (rvRows.viewTreeObserver.isAlive) {
+            rvRows.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     rvRows.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    isCanObserverWidth = true
                     val countTotalWidth = countTotalWidth()
-                    if (rvRows.width > countTotalWidth()) {
+                    if (rvRows.width > countTotalWidth) {
                         recalcWidthCellsMaxDisplay(countTotalWidth)
-                        setUpRecyclerView()
-                        initHeaderColumns()
-                        initHeaderRows()
+                        startDrawer()
                     }
                 }
             })
@@ -292,15 +284,12 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             textViewCell.setPadding(26, 0, 0, 0)
             llHeaderColumn.addView(textViewCell)
         }
+
+        hsvHeaderColumn.setOnTouchListener { _, _ -> true }
     }
 
     private fun initHeaderRows() {
         llHeaderRow.removeAllViews()
-//        if (skColumnHeader == null) {
-//            hsvHeaderColumn.visibility = View.GONE
-//            return
-//        }
-//        hsvHeaderColumn.visibility = View.VISIBLE
 
         for (i in rowsHeader) {
             val textViewCell = TextView(mContext)
@@ -312,6 +301,8 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             textViewCell.setBackgroundResource(R.drawable.border_contorn_row_header)
             llHeaderRow.addView(textViewCell)
         }
+
+        svHeaderRow.setOnTouchListener { _, _ -> true }
     }
 
     /**
@@ -323,12 +314,6 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         manager.setTotalColumnCount(1)
         rvRows.layoutManager = manager
         rvRows.adapter = rowAdapter
-//        rvRows.addItemDecoration(DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
-        rvRows.removeOnScrollListener(onScrollObserverColumnHeader)
-        rvRows.addOnScrollListener(onScrollObserverColumnHeader)
-
-        rvRows.removeOnScrollListener(onScrollObserverRowHeader)
-        rvRows.addOnScrollListener(onScrollObserverRowHeader)
     }
 
     private fun countTotalWidth(): Int {
