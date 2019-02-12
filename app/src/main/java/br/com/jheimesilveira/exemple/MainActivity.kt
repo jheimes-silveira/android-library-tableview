@@ -21,7 +21,8 @@ class MainActivity : AppCompatActivity() {
         model.rows = GenerateMock.prepareData(etRows.text.toString().toInt(), etColumn.text.toString().toInt())
         model.columnsHeader = GenerateMock.getPrepareColumnHeader( etColumn.text.toString().toInt())
         tableview.allItens(
-                rows = GenerateMock.prepareData(etRows.text.toString().toInt(), etColumn.text.toString().toInt()))
+                columnsHeader = model.columnsHeader,
+                rows = model.rows)
 //        tableview.striped = true
         tableview.startDrawer()
     }

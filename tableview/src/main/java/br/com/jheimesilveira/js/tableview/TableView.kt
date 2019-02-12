@@ -243,9 +243,14 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
                 }
             }
 
+            columnsHeader[j].width = getConverStringToWidth(columnsHeader[j].data)
+            if (columnsHeader[j].width > maxWidth) {
+                 maxWidth = columnsHeader[j].width
+            }
             for (i: Int in 0 until sizeI) {
                 rows[i].cells[j].width = maxWidth
             }
+
             log("setGenerateMaxWidthPerColumn max width= $maxWidth")
             columnsHeader[j].width = maxWidth
         }

@@ -51,17 +51,17 @@ object GenerateMock {
         var cellColumn: ColumnHeader?
 
         if (column >= 0) {
-            cellColumn = ColumnHeader(data = "Nomes")
+            cellColumn = ColumnHeader(data = "descrição do nome completo")
             array.add(cellColumn)
         }
 
         if (column >= 1) {
-            cellColumn = ColumnHeader(data = "CPF")
+            cellColumn = ColumnHeader(data = "numero do CPF de cada usuario")
             array.add(cellColumn)
         }
 
         if (column >= 2) {
-            cellColumn = ColumnHeader(data = "Salário")
+            cellColumn = ColumnHeader(data = "conta salário")
             array.add(cellColumn)
         }
 
