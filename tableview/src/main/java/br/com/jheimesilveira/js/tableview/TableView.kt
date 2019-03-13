@@ -237,17 +237,19 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
             var maxWidth = 0
             log("setGenerateMaxWidthPerColumn index j= $j")
             for (i: Int in 0 until sizeI) {
-                val width = getConverStringToWidth(rows[i].cells[j].data)
+                val width = if (rows[i].cells[j].width > 0) rows[i].cells[j].width else getConverStringToWidth(rows[i].cells[j].data)
                 log("setGenerateMaxWidthPerColumn index i= $i width= $width")
                 if (maxWidth < width) {
                     maxWidth = width
                 }
             }
 
-            columnsHeader[j].width = getConverStringToWidth(columnsHeader[j].data)
+            columnsHeader[j].width = if (columnsHeader[j].width > 0) columnsHeader[j].width else getConverStringToWidth(columnsHeader[j].data)
+
             if (columnsHeader[j].width > maxWidth) {
                  maxWidth = columnsHeader[j].width
             }
+
             for (i: Int in 0 until sizeI) {
                 rows[i].cells[j].width = maxWidth
             }
@@ -280,6 +282,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
                 }
             }
         }
+
         return maxCaracter
     }
 
