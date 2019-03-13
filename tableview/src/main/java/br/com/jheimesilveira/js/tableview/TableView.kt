@@ -47,6 +47,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     private var heightPixelsDisplay: Int = 0
     private var widthPixelsDisplay: Int = 0
     private var isCanObserverWidth: Boolean = false
+    private var recalcWidthCellsMaxDisplayListener: (() -> Unit)? = null
 
     init {
 //        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TableView, 0, 0)
@@ -88,6 +89,10 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         initStartEventsRecycler()
     }
 
+    fun onRecalcWidthCellsMaxDisplayListener(recalcWidthCellsMaxDisplayListener: () -> Unit) {
+        this.recalcWidthCellsMaxDisplayListener = recalcWidthCellsMaxDisplayListener
+    }
+
     private fun initStartEventsRecycler() {
         log("initStartEventsRecycler")
         rvRows.clearOnScrollListeners()
@@ -103,20 +108,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
                 svHeaderRow.scrollTo(0, scrollY)
                 hsvHeaderColumn.scrollTo(scrollX, 0)
             }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-            }
         })
-
-        if (isCanObserverWidth) {
-            val countTotalWidth = countTotalWidth()
-            if (rvRows.width > countTotalWidth) {
-                log("rvRows.width: ${rvRows.width} countTotalWidth: $countTotalWidth")
-                recalcWidthCellsMaxDisplay(countTotalWidth)
-                startDrawer()
-            }
-        }
 
         if (rvRows.viewTreeObserver.isAlive) {
             rvRows.viewTreeObserver.addOnGlobalLayoutListener {
@@ -127,9 +119,21 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
                     log("rvRows.width: ${rvRows.width} countTotalWidth: $countTotalWidth")
                     recalcWidthCellsMaxDisplay(countTotalWidth)
                     startDrawer()
+                    recalcWidthCellsMaxDisplayListener?.invoke()
                 }
             }
         }
+
+        if (isCanObserverWidth) {
+            val countTotalWidth = countTotalWidth()
+            if (rvRows.width > countTotalWidth) {
+                log("rvRows.width: ${rvRows.width} countTotalWidth: $countTotalWidth")
+                recalcWidthCellsMaxDisplay(countTotalWidth)
+                startDrawer()
+                recalcWidthCellsMaxDisplayListener?.invoke()
+            }
+        }
+
     }
 
     private fun initViews() {
