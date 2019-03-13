@@ -47,7 +47,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
     private var heightPixelsDisplay: Int = 0
     private var widthPixelsDisplay: Int = 0
     private var isCanObserverWidth: Boolean = false
-    private var recalcWidthCellsMaxDisplayListener: (() -> Unit)? = null
+    private var recalcWidthCellsMaxDisplayListener: ((rows: ArrayList<Row>) -> Unit)? = null
 
     init {
 //        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.TableView, 0, 0)
@@ -89,7 +89,7 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
         initStartEventsRecycler()
     }
 
-    fun onRecalcWidthCellsMaxDisplayListener(recalcWidthCellsMaxDisplayListener: () -> Unit) {
+    fun onRecalcWidthCellsMaxDisplayListener(recalcWidthCellsMaxDisplayListener: (rows: ArrayList<Row>) -> Unit) {
         this.recalcWidthCellsMaxDisplayListener = recalcWidthCellsMaxDisplayListener
     }
 
@@ -119,7 +119,6 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
                     log("rvRows.width: ${rvRows.width} countTotalWidth: $countTotalWidth")
                     recalcWidthCellsMaxDisplay(countTotalWidth)
                     startDrawer()
-                    recalcWidthCellsMaxDisplayListener?.invoke()
                 }
             }
         }
@@ -130,10 +129,8 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
                 log("rvRows.width: ${rvRows.width} countTotalWidth: $countTotalWidth")
                 recalcWidthCellsMaxDisplay(countTotalWidth)
                 startDrawer()
-                recalcWidthCellsMaxDisplayListener?.invoke()
             }
         }
-
     }
 
     private fun initViews() {
@@ -366,6 +363,8 @@ class TableView @JvmOverloads constructor(var mContext: Context, attrs: Attribut
                 cell.width += diff
             }
         }
+
+        recalcWidthCellsMaxDisplayListener?.invoke(rows)
     }
 
     private fun log(log: String) {
