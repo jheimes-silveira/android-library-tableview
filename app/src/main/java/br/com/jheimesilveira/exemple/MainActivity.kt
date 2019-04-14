@@ -16,14 +16,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTable() {
-
-        var model = TableViewModel()
-        model.rows = GenerateMock.prepareData(etRows.text.toString().toInt(), etColumn.text.toString().toInt())
-        model.columnsHeader = GenerateMock.getPrepareColumnHeader( etColumn.text.toString().toInt())
+        val tableDto = TableDto("titulo")
+        tableDto.columns = arrayListOf()
+        tableDto.rows = arrayListOf(
+                arrayListOf("inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input"),
+                arrayListOf("inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input"),
+                arrayListOf("inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input"),
+                arrayListOf("inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input"),
+                arrayListOf("inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input"),
+                arrayListOf("inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input", "inputl loren test imed. tes lorem input")
+        )
+        val model = TableViewModelBia(tableDto)
         tableview.allItens(
-                columnsHeader = model.columnsHeader,
-                rows = model.rows)
-//        tableview.striped = true
+                model.getCellList(),
+                model.getColumnHeaderList(),
+                model.getRowHeaderList())
+
         tableview.startDrawer()
     }
 

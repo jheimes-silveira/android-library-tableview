@@ -30,7 +30,7 @@ class RecyclerViewAdapter(var mContext: Context, var dataSet: ArrayList<TableVie
                 tableModel.rows,
                 tableModel.columnsHeader)
 
-        val height = if ( holder.itemView.table.rows[0].height * holder.itemView.table.rows.size > 800)
+        val height = if (holder.itemView.table.rows[0].height * holder.itemView.table.rows.size > 800)
             800
         else
             ViewGroup.LayoutParams.MATCH_PARENT
@@ -47,8 +47,7 @@ class RecyclerViewAdapter(var mContext: Context, var dataSet: ArrayList<TableVie
         }
         android.os.Handler().postDelayed({
             holder.itemView.table.startDrawer()
-        },10)
-
+        }, 10)
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)

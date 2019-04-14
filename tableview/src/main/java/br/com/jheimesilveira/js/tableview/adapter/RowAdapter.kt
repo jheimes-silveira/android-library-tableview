@@ -66,5 +66,4 @@ class RowAdapter(private val context: Context,
     inner class ClubViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var llBody: LinearLayout = view.findViewById(R.id.llBody)
     }
-
 }
